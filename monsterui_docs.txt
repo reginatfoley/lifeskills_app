@@ -1,0 +1,735 @@
+<project title="MonsterUI Documentation">> MonsterUI is a python library which brings styling to python for FastHTML apps.<api reference><doc title="API List"># monsterui Module Documentation
+
+## monsterui.core
+
+- `class Theme(Enum)`
+    Selector to choose theme and get all headers needed for app.  Includes frankenui + tailwind + daisyui + highlight.js options
+    Members: slate, stone, gray, neutral, red, rose, orange, green, blue, yellow, violet, zinc
+
+    - `headers(self, mode, daisy, highlightjs)`
+        Create frankenui and tailwind cdns
+
+    - `local_headers(self, mode, static_dir, daisy, highlightjs)`
+        Create headers using local files downloaded from CDNs
+
+
+## monsterui.daisy
+
+- `class AlertT(Enum)`
+    Alert styles from DaisyUI
+    Members: info, success, warning, error
+
+
+- `def Alert(*c, **kwargs)`
+    Alert informs users about important events.
+
+- `class StepsT(Enum)`
+    Options for Steps
+    Members: vertical, horizonal
+
+
+- `class StepT(Enum)`
+    Step styles for LiStep
+    Members: primary, secondary, accent, info, success, warning, error, neutral
+
+
+- `def Steps(*li, **kwargs)`
+    Creates a steps container
+
+- `def LiStep(*c, **kwargs)`
+    Creates a step list item
+
+- `class LoadingT(Enum)`
+    Members: spinner, dots, ring, ball, bars, infinity, xs, sm, md, lg
+
+
+- `def Loading(cls, htmx_indicator, **kwargs)`
+    Creates a loading animation component
+
+- `class ToastHT(Enum)`
+    Horizontal position for Toast
+    Members: start, center, end
+
+
+- `class ToastVT(Enum)`
+    Vertical position for Toast
+    Members: top, middle, bottom
+
+
+- `def Toast(*c, **kwargs)`
+    Toasts are stacked announcements, positioned on the corner of page.
+
+## monsterui.foundations
+
+> Data Structures and Utilties
+
+- `def stringify(o)`
+    Converts input types into strings that can be passed to FT components
+
+- `class VEnum(Enum)`
+    Members: 
+
+    - `__str__(self)`
+    - `__add__(self, other)`
+    - `__radd__(self, other)`
+
+## monsterui.franken
+
+- `class TextT(Enum)`
+    Text Styles from https://franken-ui.dev/docs/text
+    Members: lead, meta, italic, sm, default, lg, light, normal, bold, lighter, bolder, capitalize, uppercase, lowercase, decoration_none, muted, primary, secondary, success, warning, danger, left, right, center, justify, top, middle, bottom, baseline, truncate, break_, nowrap
+
+
+- `class TextFont(Enum)`
+    Combinations of TextT that are particularly useful
+    Members: muted_sm, muted_lg, bold_sm, md_weight_sm
+
+    - `__add__(self, other)`
+    - `__radd__(self, other)`
+    - `__str__(self)`
+
+- `def PParagraph(*c, **kwargs)`
+    P Tag with paragraph style applied
+
+- `def PLarge(*c, **kwargs)`
+    P Tag with large style applied
+
+- `def PLead(*c, **kwargs)`
+    P Tag with lead style applied
+
+- `def PSmall(*c, **kwargs)`
+    P Tag with small style applied
+
+- `def PMuted(*c, **kwargs)`
+    P Tag with muted style applied
+
+- `def CodeSpan(*c, **kwargs)`
+    A CodeSpan with Styling
+
+- `def Blockquote(*c, **kwargs)`
+    Blockquote with Styling
+
+- `def CodeBlock(*c, **kwargs)`
+    CodeBlock with Styling
+
+- `def H1(*c, **kwargs)`
+    H1 with styling and appropriate size
+
+- `def H2(*c, **kwargs)`
+    H2 with styling and appropriate size
+
+- `def H3(*c, **kwargs)`
+    H3 with styling and appropriate size
+
+- `def H4(*c, **kwargs)`
+    H4 with styling and appropriate size
+
+- `class ButtonT(Enum)`
+    Options for styling Buttons
+    Members: default, primary, secondary, danger, text, link, ghost
+
+
+- `def Button(*c, **kwargs)`
+    Button with Styling (defaults to `submit` for form submission)
+
+- `class ContainerT(Enum)`
+    Max width container sizes from https://franken-ui.dev/docs/container
+    Members: xs, sm, lg, xl, expand
+
+
+- `class BackgroundT(Enum)`
+    Members: muted, primary, secondary, default
+
+
+- `def Container(*c, **kwargs)`
+    Div to be used as a container that often wraps large sections or a page of content
+
+- `def Titled(title, *c, **kwargs)`
+    Creates a standard page structure for titled page.  Main(Container(title, content))
+
+- `class DividerT(Enum)`
+    Divider Styles from https://franken-ui.dev/docs/divider
+    Members: icon, sm, vertical
+
+
+- `def Divider(*c, **kwargs)`
+    Divider with default styling and margin
+
+- `def DividerSplit(*c)`
+    Creates a simple horizontal line divider with configurable thickness and vertical spacing
+
+- `def Article(*c, **kwargs)`
+    A styled article container for blog posts or similar content
+
+- `def ArticleTitle(*c, **kwargs)`
+    A title component for use within an Article
+
+- `def ArticleMeta(*c, **kwargs)`
+    A metadata component for use within an Article showing things like date, author etc
+
+- `class SectionT(Enum)`
+    Section styles from https://franken-ui.dev/docs/section
+    Members: default, muted, primary, secondary, xs, sm, lg, xl, remove_vertical
+
+
+- `def Section(*c, **kwargs)`
+    Section with styling and margins
+
+- `def Form(*c, **kwargs)`
+    A Form with default spacing between form elements
+
+- `def Fieldset(*c, **kwargs)`
+    A Fieldset with default styling
+
+- `def Legend(*c, **kwargs)`
+    A Legend with default styling
+
+- `def Input(*c, **kwargs)`
+    An Input with default styling
+
+- `def Select(*option, **kwargs)`
+    A Select with default styling, though often `UkSelect` is a better choice
+
+- `def Radio(*c, **kwargs)`
+    A Radio with default styling
+
+- `def CheckboxX(*c, **kwargs)`
+    A Checkbox with default styling
+
+- `def Range(*c, **kwargs)`
+    A Range with default styling
+
+- `def TextArea(*c, **kwargs)`
+    A Textarea with default styling
+
+- `def Switch(*c, **kwargs)`
+    A Switch with default styling
+
+- `def FormLabel(*c, **kwargs)`
+    A Label with default styling
+
+- `class LabelT(Enum)`
+    Members: primary, secondary, danger
+
+
+- `def Label(*c, **kwargs)`
+    FrankenUI labels, which look like pills
+
+- `def UkFormSection(title, description, *c)`
+    A form section with a title, description and optional button
+
+- `def GenericLabelInput(label, lbl_cls, input_cls, container, cls, id, input_fn, **kwargs)`
+    `Div(Label,Input)` component with Uk styling injected appropriately. Generally you should higher level API, such as `LabelInput` which is created for you in this library
+
+- `def LabelInput(label, lbl_cls, input_cls, cls, id, **kwargs)`
+    A `FormLabel` and `Input` pair that provides default spacing and links/names them based on id
+
+- `def LabelRange(label, lbl_cls, input_cls, cls, id, **kwargs)`
+    A `FormLabel` and `Range` pair that provides default spacing and links/names them based on id
+
+- `def LabelRadio(label, lbl_cls, input_cls, container, cls, id, **kwargs)`
+    A FormLabel and Radio pair that provides default spacing and links/names them based on id
+
+- `def LabelCheckboxX(label, lbl_cls, input_cls, container, cls, id, **kwargs)`
+    A FormLabel and CheckboxX pair that provides default spacing and links/names them based on id
+
+- `def LabelSelect(*option, **kwargs)`
+    A FormLabel and Select pair that provides default spacing and links/names them based on id (usually UkLabelSelect is a better choice)
+
+- `def Options(*c)`
+    Helper function to wrap things into `Option`s for use in `UkSelect`
+
+- `def UkSelect(*option, **kwargs)`
+    Creates a select dropdown with uk styling and option for adding a search box
+
+- `def LabelUkSelect(*option, **kwargs)`
+    A FormLabel and Select pair that provides default spacing and links/names them based on id
+
+- `class AT(Enum)`
+    Link styles from https://franken-ui.dev/docs/link
+    Members: muted, text, reset, primary
+
+
+- `class ListT(Enum)`
+    List styles from https://franken-ui.dev/docs/list
+    Members: disc, circle, square, decimal, hyphen, muted, primary, secondary, bullet, divider, striped
+
+
+- `def UkList(*li, **kwargs)`
+    Creates a list with styling
+
+- `def ModalContainer(*c, **kwargs)`
+    Creates a modal container that components go in
+
+- `def ModalDialog(*c, **kwargs)`
+    Creates a modal dialog
+
+- `def ModalHeader(*c, **kwargs)`
+    Creates a modal header
+
+- `def ModalBody(*c, **kwargs)`
+    Creates a modal body
+
+- `def ModalFooter(*c, **kwargs)`
+    Creates a modal footer
+
+- `def ModalTitle(*c, **kwargs)`
+    Creates a modal title
+
+- `def ModalCloseButton(*c, **kwargs)`
+    Creates a button that closes a modal with js
+
+- `def Modal(*c, **kwargs)`
+    Creates a modal with the appropriate classes to put the boilerplate in the appropriate places for you
+
+- `class PaddingT(Enum)`
+    Padding Modifiers from https://franken-ui.dev/docs/padding
+    Members: xs, sm, default, md, lg, xl, remove, remove_top, remove_bottom, remove_left, remove_right, remove_vertical, remove_horizontal
+
+
+- `class PositionT(Enum)`
+    Position modifiers from https://franken-ui.dev/docs/position
+    Members: top, bottom, left, right, top_left, top_center, top_right, center, center_left, center_right, bottom_left, bottom_center, bottom_right, center_horizontal, center_vertical
+
+
+- `def Placeholder(*c, **kwargs)`
+    Creates a placeholder
+
+- `def Progress(*c, **kwargs)`
+    Creates a progress bar
+
+- `def UkIcon(icon, height, width, stroke_width, cls, **kwargs)`
+    Creates an icon using lucide icons
+
+- `def UkIconLink(icon, height, width, stroke_width, cls, button, **kwargs)`
+    Creates an icon link using lucide icons
+
+- `def DiceBearAvatar(seed_name, h, w)`
+    Creates an Avatar using https://dicebear.com/
+
+- `class FlexT(Enum)`
+    Flexbox modifiers from UIkit
+    Members: block, inline, left, center, right, between, around, stretch, top, middle, bottom, row, row_reverse, column, column_reverse, nowrap, wrap, wrap_reverse
+
+
+- `def Grid(*div, **kwargs)`
+    Creates a responsive grid layout with smart defaults based on content
+
+- `def DivFullySpaced(*c, **kwargs)`
+    Creates a flex div with it's components having as much space between them as possible
+
+- `def DivCentered(*c, **kwargs)`
+    Creates a flex div with it's components centered in it
+
+- `def DivLAligned(*c, **kwargs)`
+    Creates a flex div with it's components aligned to the left
+
+- `def DivRAligned(*c, **kwargs)`
+    Creates a flex div with it's components aligned to the right
+
+- `def DivVStacked(*c, **kwargs)`
+    Creates a flex div with it's components stacked vertically
+
+- `def DivHStacked(*c, **kwargs)`
+    Creates a flex div with it's components stacked horizontally
+
+- `class NavT(Enum)`
+    Members: default, primary, secondary
+
+
+- `def NavContainer(*li, **kwargs)`
+    Creates a navigation container (useful for creating a sidebar navigation).  A Nav is a list (NavBar is something different)
+
+- `def NavParentLi(*nav_container, **kwargs)`
+    Creates a navigation list item with a parent nav for nesting
+
+- `def NavDividerLi(*c, **kwargs)`
+    Creates a navigation list item with a divider
+
+- `def NavHeaderLi(*c, **kwargs)`
+    Creates a navigation list item with a header
+
+- `def NavSubtitle(*c, **kwargs)`
+    Creates a navigation subtitle
+
+- `def NavCloseLi(*c, **kwargs)`
+    Creates a navigation list item with a close button
+
+- `def NavBarContainer(*navbarside, **kwargs)`
+    Create a NavBarContainer to put NavBar sides in
+
+- `def NavBarLSide(*c, **kwargs)`
+    Creates a NavBar left side
+
+- `def NavBarRSide(*c, **kwargs)`
+    Creates a NavBar right side
+
+- `def NavBarCenter(*c, **kwargs)`
+    Creates a NavBar center
+
+- `def NavBarNav(*li, **kwargs)`
+    A Nav that is part of a NavBar that could go in a `NavBarLSide`, `NavBarRSide`, or `NavBarCenter`
+
+- `def NavBarSubtitle(title, subtitle, cls, subtitle_cls, **kwargs)`
+    Creates a NavBar subtitle
+
+- `def NavBarNavContainer(*li, **kwargs)`
+    Drop Down Nav
+
+- `def SliderContainer(*c, **kwargs)`
+    Creates a slider container
+
+- `def SliderItems(*c, **kwargs)`
+    Creates a slider items container
+
+- `def SliderNav(cls, prev_cls, next_cls, **kwargs)`
+    Navigation arrows for Slider component
+
+- `def Slider(*c, **kwargs)`
+    Creates a slider with optional navigation arrows
+
+- `def DropDownNavContainer(*li, **kwargs)`
+    A Nav that is part of a DropDown
+
+- `def TabContainer(*li, **kwargs)`
+    A TabContainer where children will be different tabs
+
+- `class CardT(Enum)`
+    Card styles from UIkit
+    Members: default, primary, secondary, danger, hover
+
+
+- `def CardTitle(*c, **kwargs)`
+    Creates a card title
+
+- `def CardHeader(*c, **kwargs)`
+    Creates a card header
+
+- `def CardBody(*c, **kwargs)`
+    Creates a card body
+
+- `def CardFooter(*c, **kwargs)`
+    Creates a card footer
+
+- `def CardContainer(*c, **kwargs)`
+    Creates a card container
+
+- `def Card(*c, **kwargs)`
+    Creates a Card with a header, body, and footer
+
+- `class TableT(Enum)`
+    Members: divider, striped, hover, sm, lg, justify, middle, responsive
+
+
+- `def Table(*c, **kwargs)`
+    Creates a table
+
+- `def TableFromLists(header_data, body_data, footer_data, header_cell_render, body_cell_render, footer_cell_render, cls, sortable, **kwargs)`
+    Creates a Table from a list of header data and a list of lists of body data
+
+- `def TableFromDicts(header_data, body_data, footer_data, header_cell_render, body_cell_render, footer_cell_render, cls, sortable, **kwargs)`
+    Creates a Table from a list of header data and a list of dicts of body data
+
+- `def apply_classes(html_str, class_map, class_map_mods)`
+    Apply classes to html string
+
+- `def render_md(md_content, class_map, class_map_mods)`
+    Renders markdown using mistletoe and lxml
+</doc></api reference><examples><doc title="Dashboard">"""FrankenUI Dashboard Example built with MonsterUI (original design by ShadCN)"""
+
+from fasthtml.common import *
+from monsterui.all import *
+from fasthtml.svg import *
+import numpy as np
+import plotly.express as px
+import pandas as pd
+import numpy as np
+
+app, rt = fast_app(hdrs=Theme.blue.headers())
+
+def generate_chart(num_points=30):
+    df = pd.DataFrame({
+        'Date': pd.date_range('2024-01-01', periods=num_points),
+        'Revenue': np.random.normal(100, 10, num_points).cumsum(),
+        'Users': np.random.normal(80, 8, num_points).cumsum(), 
+        'Growth': np.random.normal(60, 6, num_points).cumsum()})
+    
+    fig = px.line(df, x='Date', y=['Revenue', 'Users', 'Growth'],  template='plotly_white', line_shape='spline')
+    
+    fig.update_traces(mode='lines+markers')
+    fig.update_layout(
+        margin=dict(l=20, r=20, t=20, b=20), hovermode='x unified',
+        showlegend=True, legend=dict(orientation='h', yanchor='bottom', y=1.02,  xanchor='right', x=1),
+        plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+        xaxis=dict(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.1)'),
+        yaxis=dict(showgrid=True, gridwidth=1, gridcolor='rgba(0,0,0,0.1)'))
+    
+    return fig.to_html(include_plotlyjs=True, full_html=False, config={'displayModeBar': False})
+
+def InfoCard(title, value, change): return Card(H3(value),P(change, cls=TextFont.muted_sm), header = H4(title))
+
+rev = InfoCard("Total Revenue", "$45,231.89", "+20.1% from last month")
+sub = InfoCard("Subscriptions", "+2350", "+180.1% from last month")
+sal = InfoCard("Sales", "+12,234", "+19% from last month")
+act = InfoCard("Active Now", "+573", "+201 since last hour")
+
+info_card_data = [("Total Revenue", "$45,231.89", "+20.1% from last month"),
+                   ("Subscriptions", "+2350", "+180.1% from last month"),
+                   ("Sales", "+12,234", "+19% from last month"),
+                   ("Active Now", "+573", "+201 since last hour")]
+
+top_info_row = Grid(*[InfoCard(*row) for row in info_card_data])
+
+def AvatarItem(name, email, amount):
+    return DivFullySpaced(
+        DivLAligned(
+            DiceBearAvatar(name, 9,9),
+            Div(P(name, cls=TextFont.bold_sm), 
+                P(email, cls=TextFont.muted_sm))),
+        Div(amount, cls="ml-auto font-medium"))
+
+recent_sales = Card(
+    Div(cls="space-y-8")(
+        *[AvatarItem(n,e,d) for (n,e,d) in (
+            ("Olivia Martin",   "olivia.martin@email.com",   "+$1,999.00"),
+            ("Jackson Lee",     "jackson.lee@email.com",     "+$39.00"),
+            ("Isabella Nguyen", "isabella.nguyen@email.com", "+$299.00"),
+            ("William Kim",     "will@email.com",            "+$99.00"),
+            ("Sofia Davis",     "sofia.davis@email.com",     "+$39.00"))]),
+    header=Div(H3("Recent Sales"),P("You made 265 sales this month.", cls=TextFont.muted_sm)),
+    cls='col-span-3')
+
+teams = [["Alicia Koch"],['Acme Inc', 'Monster Inc.'],['Create a Team']]
+
+opt_hdrs = ["Personal", "Team", ""]
+
+team_dropdown = UkSelect(
+    Optgroup(Option(A("Alicia Koch")), label="Personal Account"),
+    Optgroup(Option(A("Acme Inc")), Option(A("Monster Inc.")), label="Teams"),
+    Option(A("Create a Team")),
+    cls='flex items-center')
+
+hotkeys = [('Profile','⇧⌘P'),('Billing','⌘B'),('Settings','⌘S'),('New Team', ''), ('Logout', '')]
+
+def NavSpacedLi(t,s): return NavCloseLi(A(DivFullySpaced(P(t),P(s,cls=TextFont.muted_sm))))
+
+avatar_dropdown = Div(
+      DiceBearAvatar('Alicia Koch',8,8),
+      DropDownNavContainer(
+          NavHeaderLi('sveltecult',NavSubtitle("leader@sveltecult.com")),
+          *[NavSpacedLi(*hk) for hk in hotkeys],))
+
+top_nav = NavBar(
+    Div(team_dropdown, *map(lambda x: Li(A(x)), ["Overview", "Customers", "Products", "Settings"])),
+    DivLAligned(avatar_dropdown, Input(placeholder='Search')))
+
+@rt
+def index():
+    return Title("Dashboard Example"), Container(
+        top_nav,
+        H2('Dashboard'),
+        TabContainer(
+            Li(A("Overview"),cls='uk-active'),
+            *map(lambda x: Li(A(x)), ["Analytics", "Reports", "Notifications"]),
+            alt=True),
+        top_info_row,
+        Grid(
+            Card(Safe(generate_chart(100)),cls='col-span-4'),
+            recent_sales,
+            gap=4,cols=7),
+        cls=('space-y-4', ContainerT.xl))
+
+serve()</doc><doc title="Ticket"># 404 - Page Not Found
+
+The page you're looking for doesn't exist.
+</doc><doc title="Music">"""FrankenUI Music Example build with MonsterUI (Original design by ShadCN)"""
+
+from fasthtml.common import *
+from monsterui.all import *
+ 
+app, rt = fast_app(hdrs=Theme.blue.headers())
+
+def MusicLi(t,hk=''): return Li(A(DivFullySpaced(t,P(hk,cls=TextFont.muted_sm))))
+
+music_items = [("About Music", ""   ),
+               ("Preferences", "⌘"  ),
+               ("Hide Music" , "⌘H" ),
+               ("Hide Others", "⇧⌘H"),
+               ("Quit Music" , "⌘Q" )]
+
+file_dd_items = [("New",                   ""),
+                 ("Open Stream URL",       "⌘U"),
+                 ("Close Window",          "⌘W"),
+                 ("Library",               ""),
+                 ("Import",                "⌘O"),
+                 ("Burn Playlist to Disc", ""),
+                 ("Show in Finder",        "⇧⌘R"),
+                 ("Convert",               ""),
+                 ("Page Setup",            "Print")]
+
+edit_actions = [("Undo",         "⌘Z"),
+                ("Redo",         "⇧⌘Z"),
+                ("Cut",          "⌘X"),
+                ("Copy",         "⌘C"),
+                ("Paste",        "⌘V"),
+                ("Select All",   "⌘A"),
+                ("Deselect All", "⇧⌘A")]
+
+view_dd_data = ["Show Playing Next", "Show Lyrics", "Show Status Bar", "Hide Sidebar", "Enter Full Screen"]
+
+music_headers = NavBarContainer(
+            NavBarLSide(
+                NavBarNav(
+                Li(A("Music"),NavBarNavContainer(map(lambda x: MusicLi(*x), music_items))),
+                Li(A("File"), NavBarNavContainer(map(lambda x: MusicLi(*x), file_dd_items))),
+                Li(A("Edit")),
+                    NavBarNavContainer(
+                        *map(lambda x: MusicLi(*x), edit_actions),
+                        Li(A(DivFullySpaced("Smart Dictation",UkIcon("mic")))),
+                        Li(A(DivFullySpaced("Emojis & Symbols",UkIcon("globe"))))),
+                Li(A("View"),
+                NavBarNavContainer(map(lambda x: MusicLi(x), view_dd_data))),
+                Li(A("Account"),
+                    NavBarNavContainer(
+                        NavHeaderLi("Switch Account"),
+                        *map(MusicLi, ("Andy", "Benoit", "Luis", "Manage Family", "Add Account")))))))
+
+
+def Album(title,artist):
+    img_url = 'https://ucarecdn.com/e5607eaf-2b2a-43b9-ada9-330824b6afd7/music1.webp'
+    return Div(
+        Div(cls="overflow-hidden rounded-md")(Img(cls="transition-transform duration-200 hover:scale-105", src=img_url)),
+        Div(cls='space-y-1')(P(title,cls=TextT.bold),P(artist,cls=TextT.muted)))
+        
+listen_now_albums = (("Roar", "Catty Perry"), ("Feline on a Prayer", "Cat Jovi"),("Fur Elise", "Ludwig van Beethovpurr"),("Purrple Rain", "Prince's Cat"))
+
+made_for_you_albums = [("Like a Feline",         "Catdonna"),
+                       ("Livin' La Vida Purrda", "Ricky Catin"),
+                       ("Meow Meow Rocket",      "Elton Cat"),
+                       ("Rolling in the Purr",   "Catdelle"),
+                       ("Purrs of Silence",      "Cat Garfunkel"),
+                       ("Meow Me Maybe",         "Carly Rae Purrsen"),]
+
+music_content = (Div(H3("Listen Now"), cls="mt-6 space-y-1"),
+                    P("Top picks for you. Updated daily.",cls=TextFont.muted_sm),
+                    DividerLine(),
+                    Grid(*[Album(t,a) for t,a in listen_now_albums], cls='gap-8'),
+                    Div(H3("Made for You"), cls="mt-6 space-y-1"),
+                    P("Your personal playlists. Updated daily.", cls=TextFont.muted_sm),
+                    DividerLine(),
+                    Grid(*[Album(t,a) for t,a in made_for_you_albums], cols_xl=6))
+
+tabs = TabContainer(
+    Li(A('Music',    href='#'),    cls='uk-active'),
+    Li(A('Podcasts', href='#')),
+    Li(A('Live', cls='opacity-50'), cls='uk-disabled'),
+    uk_switcher='connect: #component-nav; animation: uk-animation-fade',
+    alt=True)
+
+def podcast_tab():
+    return Div(
+        Div(cls='space-y-3 mt-6')(
+            H3("New Episodes"),
+            P("Your favorite podcasts. Updated daily.", cls=TextFont.muted_sm)),
+        Div(cls="uk-placeholder flex h-[450px] items-center justify-center rounded-md",uk_placeholder=True)(
+            DivVStacked(cls="space-y-6")(
+                UkIcon("microphone", 3),
+                H4("No episodes added"),
+                P("You have not added any podcasts. Add one below.", cls=TextFont.muted_sm),
+                Button("Add Podcast", cls=ButtonT.primary))))
+
+discoved_data =  [("play-circle","Listen Now"), ("binoculars", "Browse"), ("rss","Radio")]
+library_data =   [("play-circle", "Playlists"), ("music", "Songs"), ("user", "Made for You"), ("users", "Artists"), ("bookmark", "Albums")]
+playlists_data = [("library","Recently Added"), ("library","Recently Played")]
+
+def MusicSidebarLi(icon, text): return Li(A(DivLAligned(UkIcon(icon), P(text))))
+sidebar = NavContainer(
+    NavHeaderLi(H3("Discover")), *[MusicSidebarLi(*o) for o in discoved_data],
+    NavHeaderLi(H3("Library")),  *[MusicSidebarLi(*o) for o in library_data],
+    NavHeaderLi(H3("Playlists")),*[MusicSidebarLi(*o) for o in playlists_data],
+    cls=(NavT.primary,'space-y-3','pl-8'))
+
+@rt
+def index():
+    return Title("Music Example"),Container(music_headers, DividerSplit(),
+        Grid(sidebar,
+            Div(cls="col-span-4 border-l border-border")(
+                Div(cls="px-8 py-6")(
+                    DivFullySpaced(
+                        Div(cls="max-w-80")(tabs),
+                        Button(cls=ButtonT.primary)(DivLAligned(UkIcon('circle-plus')),Div("Add music"))),
+                    Ul(id="component-nav", cls="uk-switcher")(
+                        Li(*music_content),
+                        Li(podcast_tab())))),
+            cols_sm=1, cols_md=1, cols_lg=5, cols_xl=5))
+
+serve()</doc><doc title="Playground">"""FrankenUI Playground Example built with MonsterUI (original design by ShadCN)"""
+
+from fasthtml.common import *
+from monsterui.all import *
+from fasthtml.svg import *
+
+app, rt = fast_app(hdrs=Theme.blue.headers())
+
+preset_options = ["Grammatical Standard English", "Summarize for a 2nd grader",
+        "Text to command","Q&A","English to other languages","Parse unstructured data",
+        "Classification","Natural language to Python","Explain code","Chat","More examples"]
+
+def playground_navbar():
+    save_modal = Modal(
+        ModalTitle("Save preset"),
+        P("This will save the current playground state as a preset which you can access later or share with others.",cls=("mt-1.5", TextFont.muted_sm)),
+        LabelInput("Name",        id="name"), 
+        LabelInput("Description", id="description"),
+        ModalCloseButton("Save", cls=ButtonT.primary),
+        id="save")
+    
+    share_dd = Div(cls="space-y-6 p-4")(
+        H3("Share preset"),
+        P("Anyone who has this link and an OpenAI account will be able to view this.", cls=TextFont.muted_sm),
+        Div(Input(value="https://platform.openai.com/playground/p/7bbKYQvsVkNmVb8NGcdUOLae?model=text-davinci-003", readonly=True),
+            Button(UkIcon('copy'), cls=(ButtonT.primary, "uk-drop-close",'mt-4'))))
+
+    rnav = Div(
+        UkSelect(*Options(*preset_options), name='preset', optgroup_label="Examples",
+                 placeholder='Load a preset', searchable=True, cls='h-9 w-[200px] lg:w-[300px]'),
+        Button("Save",         cls=ButtonT.secondary, uk_toggle="#save"),save_modal,
+        Button("View Code",    cls=ButtonT.secondary),
+        Button("Share",        cls=ButtonT.secondary),DropDownNavContainer(share_dd),
+        Button(UkIcon(icon="ellipsis"), cls=ButtonT.secondary),
+        DropDownNavContainer(
+            Li(A("Content filter preferences")),
+            NavDividerLi(),
+            Li(A("Delete preset", cls="text-destructive")),
+        uk_dropdown="mode: click"))
+    
+    return NavBar(title=H4('Playground'),nav_links=rnav)
+
+rsidebar = NavContainer(
+    UkSelect(
+        Optgroup(map(Option,("text-davinci-003", "text-curie-001", "text-babbage-001", "text-ada-001")),label='GPT-3'),
+        Optgroup(map(Option,("code-davinci-002", "code-cushman-001")),label='Codex'),
+        label="Model",
+        searchable=True),
+    LabelRange(label='Temperature'),
+    LabelRange(label='Maximum Length'),
+    LabelRange(label='Top P'),
+    cls='space-y-6 mt-8')
+
+@rt
+def index(): 
+    navbar = playground_navbar()
+    main_content = Div(
+        Div(cls="flex-1")(
+            Textarea(cls="uk-textarea h-full p-4", placeholder="Write a tagline for an ice cream shop")),
+            cls="flex h-[700px] p-8 w-4/5")
+    
+    bottom_buttons = Div(
+        Button("Submit", cls=ButtonT.primary),
+        Button(UkIcon(icon="history"), cls=ButtonT.secondary),
+        cls="flex gap-x-2")
+    
+    return Title("Playground Example"),Div(navbar, Div(cls="flex w-full")(main_content, rsidebar), bottom_buttons)
+
+
+serve()
