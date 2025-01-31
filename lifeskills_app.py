@@ -136,33 +136,23 @@ def parse_job_list(text_file = 'job_list.txt'):
                 categories[current_category].append(line)
     return categories
 
-def create_section_with_image(category, tasks, image_url, start_task_id):
-    """
-    Create a section with tasks on the left and an image on the right
-    
-    Args:
-        category (str): Category name
-        tasks (list): List of tasks
-        image_url (str): URL/path to the image
-        start_task_id (int): Starting ID for tasks in this section
-    """
-    # Create task cards with smaller size
+
+def create_section_with_image(category, tasks, image_url, start_task_id, offset=0):
+    """Create a section with tasks on the left and an image on the right"""
     section_tasks = []
     for i, task in enumerate(tasks):
         task_id = start_task_id + i
-        section_tasks.append(make_task_card(task, task_id))
+        section_tasks.append(make_task_card(task, task_id, offset=offset))
     
     return Div(
         H2(category, cls=TextT.bold),
         DivFullySpaced(
-            # Tasks on the left (using 2/3 of space)
-            # Grid(*section_tasks, cols=1, gap=2, cls="w-2/3"),
-            Div(*section_tasks, cls="w-2/3 space-y-2"),  # Added space between cards
-            # Image on the right (using 1/3 of space)
+            Div(*section_tasks, cls="w-2/3 space-y-2"),
             Img(src=image_url, alt=f"{category} image", cls="w-1/3 h-auto rounded-lg"),
         ),
         cls="space-y-4"
     )
+
 
 def all_tasks_completed(date_key):
     """Check if all tasks are completed for a specific date"""
@@ -197,21 +187,23 @@ def create_celebration_modal():
     )
 
 
+@rt("/")
 @rt("/day/{offset}")
-def get(offset: int = 0):   
+def get(offset: int = 0):
+    """Handle both main route and day-specific routes"""
     # Calculate the date based on offset
     target_date = datetime.now() + timedelta(days=offset)
     date_str = target_date.strftime("%A, %B %d, %Y")
     
-    # Create tab navigation
+    # Create tab navigation with dynamic active states
     tabs = TabContainer(
+        Li(A("Today", href="/", cls="uk-active" if offset == 0 else "")),
         Li(A("Yesterday", href="/day/-1", cls="uk-active" if offset == -1 else "")),
-        Li(A("Today", href="/", cls="uk-active")),
         Li(A("Tomorrow", href="/day/1", cls="uk-active" if offset == 1 else "")),
         Li(A("This Week", href="/week")),
         alt=True
     )
-
+    
     header = Div(
         tabs,
         P(date_str, cls=TextFont.muted_lg),
@@ -221,7 +213,7 @@ def get(offset: int = 0):
         cls="space-y-2"
     )
 
-    # Get tasks using the parsing function
+    # Create sections
     categories = parse_job_list()
     sections = []
     task_id = 0
@@ -230,13 +222,13 @@ def get(offset: int = 0):
             category,
             tasks,
             SECTION_IMAGES[category],
-            task_id
+            task_id,
+            offset=offset
         )
         sections.append(section)
         task_id += len(tasks)
 
     return Container(header, *sections, create_celebration_modal(), cls="space-y-8")
-
 
 
 @rt
