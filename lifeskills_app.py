@@ -3,11 +3,15 @@ from monsterui.all import *
 from datetime import datetime
 
 
-app, rt = fast_app(hdrs=(
-    Script(src="https://unpkg.com/htmx.org@1.9.10"),
-    Script(src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit.min.js"),
-    Script(src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"),
-    Theme.blue.headers()), live=True)
+app, rt = fast_app(
+    hdrs=(
+        Script(src="https://unpkg.com/htmx.org@1.9.10"),
+        Script(src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit.min.js"),
+        Script(src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"),
+        Theme.blue.headers()
+    ),
+    static_path="static"  # Add this line
+)
 #live=True is used to enable live reload (no need toreload the page after changes)
 
 # Store task states (in a real app, this would be in a database)
@@ -26,8 +30,9 @@ def make_task_card(task_name, task_id):
                 id=button_id
             )
         ),
-        cls="p-4"
+        cls="p-1"
     )
+
 
 @rt("/toggle/{task_id}")
 def post(task_id: str):
@@ -43,40 +48,51 @@ def post(task_id: str):
                 id=f"btn_{task_id}",
             ),
             Script("""
-                UIkit.modal('#celebration-modal').show();
-                
-                // Add a small delay to let modal appear first
-                setTimeout(() => {
-                    // Set up canvas-confetti to appear on top
-                    const confettiConfig = {
-                        particleCount: 150,
-                        spread: 100,
-                        origin: { y: 0.6 },
-                        colors: ['#1e87f0', '#32d296', '#9c27b0'],  // blue, green, purple
-                        zIndex: 9999
-                    };
+                // First play the sound
+                const playSound = async () => {
+                    try {
+                        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/974/974-preview.mp3');
+                        audio.volume = 0.5;
+                        await audio.play();
+                    } catch (error) {
+                        console.log('Audio play failed:', error);
+                    }
+                };
+
+                // Execute everything in sequence
+                (async () => {
+                    await playSound();
+                    UIkit.modal('#celebration-modal').show();
                     
-                    // First burst
-                    confetti(confettiConfig);
-                    
-                    // Side bursts
                     setTimeout(() => {
-                        confetti({
-                            ...confettiConfig,
-                            particleCount: 100,
-                            angle: 60,
-                            spread: 80,
-                            origin: { x: 0 }
-                        });
-                        confetti({
-                            ...confettiConfig,
-                            particleCount: 100,
-                            angle: 120,
-                            spread: 80,
-                            origin: { x: 1 }
-                        });
-                    }, 250);
-                }, 100);
+                        const confettiConfig = {
+                            particleCount: 150,
+                            spread: 100,
+                            origin: { y: 0.6 },
+                            colors: ['#1e87f0', '#32d296', '#9c27b0'],
+                            zIndex: 9999
+                        };
+                        
+                        confetti(confettiConfig);
+                        
+                        setTimeout(() => {
+                            confetti({
+                                ...confettiConfig,
+                                particleCount: 100,
+                                angle: 60,
+                                spread: 80,
+                                origin: { x: 0 }
+                            });
+                            confetti({
+                                ...confettiConfig,
+                                particleCount: 100,
+                                angle: 120,
+                                spread: 80,
+                                origin: { x: 1 }
+                            });
+                        }, 250);
+                    }, 100);
+                })();
             """)
         )
     
@@ -87,8 +103,6 @@ def post(task_id: str):
         hx_swap="outerHTML",
         id=f"btn_{task_id}"
     )
-
-
 
 def parse_job_list(text_file = 'job_list.txt'):
     """
@@ -133,9 +147,10 @@ def create_section_with_image(category, tasks, image_url, start_task_id):
         H2(category, cls=TextT.bold),
         DivFullySpaced(
             # Tasks on the left (using 2/3 of space)
-            Grid(*section_tasks, cols=2, gap=2, cls="w-4/5"),
+            # Grid(*section_tasks, cols=1, gap=2, cls="w-2/3"),
+            Div(*section_tasks, cls="w-2/3 space-y-2"),  # Added space between cards
             # Image on the right (using 1/3 of space)
-            Img(src=image_url, alt=f"{category} image", cls="w-1/6 h-auto rounded-lg"),
+            Img(src=image_url, alt=f"{category} image", cls="w-1/3 h-auto rounded-lg"),
         ),
         cls="space-y-4"
     )
@@ -161,17 +176,30 @@ def all_tasks_completed():
     # Check if all existing tasks are completed
     return all(task_states.values())
 
+
+
+
 def create_celebration_modal():
-    return Modal(
-        ModalTitle("🎉 Congratulations! 🎉"),
-        P("You've completed all your tasks for today!", cls=TextFont.bold_sm),
-        P("Amazing job! Keep up the great work!", cls=TextFont.muted_sm),
-        ModalCloseButton("Close", cls=ButtonT.primary),
-        id="celebration-modal",
-        cls="text-center"
+    return Div(
+        Modal(
+            ModalTitle("🎉 Congratulations! 🎉"),
+            P("You've completed all your tasks for today!", cls=TextFont.bold_sm),
+            P("Amazing job! Keep up the great work!", cls=TextFont.muted_sm),
+            ModalCloseButton("Close", cls=ButtonT.primary),
+            id="celebration-modal",
+            cls="text-center"
+        ),
+        Audio(
+            # Try with a direct URL to test
+           src = "https://assets.mixkit.co/active_storage/sfx/974/974-preview.mp3",
+            # src = "/static/sounds/success.mp3",
+            id="celebration-sound",
+            controls=True,
+            preload="auto"
+        )
     )
 
-# Then modify your get() function like this:
+
 @rt("/")
 def get():
     today = datetime.now()
@@ -197,6 +225,7 @@ def get():
         task_id += len(tasks)
 
     return Container(header, *sections, create_celebration_modal(), cls="space-y-8")
+
 
 
 @rt
