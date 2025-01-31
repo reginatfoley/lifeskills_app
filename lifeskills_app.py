@@ -1,108 +1,117 @@
 from fasthtml.common import *
 from monsterui.all import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
+# Add this before your get() function
+SECTION_IMAGES = {
+    'CLEAN ROOM': '/static/images/room.jpg',
+    'SELF CARE': '/static/images/brushing.jpg',
+    'SCHOOL': '/static/images/classroom.jpg',
+    'FAMILY': '/static/images/family.jpg'
+}
 
-app, rt = fast_app(
-    hdrs=(
+app, rt = fast_app(hdrs=(
         Script(src="https://unpkg.com/htmx.org@1.9.10"),
         Script(src="https://cdn.jsdelivr.net/npm/uikit@3.16.19/dist/js/uikit.min.js"),
         Script(src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"),
-        Theme.blue.headers()
-    ),
-    static_path="static"  # Add this line
-)
+        Theme.blue.headers()), live=True, static_path="static")
 #live=True is used to enable live reload (no need toreload the page after changes)
 
 # Store task states (in a real app, this would be in a database)
-task_states = {}
+task_states = {}  # Format: {date_str: {task_id: bool}}
 
-def make_task_card(task_name, task_id):
+def get_date_key(offset=0):
+    """Get standardized date key for storage"""
+    date = datetime.now() + timedelta(days=offset)
+    return date.strftime("%Y-%m-%d")
+
+
+def make_task_card(task_name, task_id, offset=0):
+    """Create a task card with state for specific date"""
     button_id = f"btn_{task_id}"
+    date_key = get_date_key(offset)
+    is_completed = task_states.get(date_key, {}).get(task_id, False)
+    
     return Card(
         DivFullySpaced(
             P(task_name, cls=TextFont.bold_sm),
             Button(
                 UkIcon("check"),
-                cls=ButtonT.primary if not task_states.get(task_id, False) else "uk-button uk-button-success",
-                hx_post=f"/toggle/{task_id}",
+                cls=ButtonT.primary if not is_completed else "uk-button uk-button-success",
+                hx_post=f"/day/{offset}/toggle/{task_id}" if offset else f"/toggle/{task_id}",
                 hx_swap="outerHTML",
                 id=button_id
             )
         ),
-        cls="p-1"
+        cls="p-2"
     )
 
 
 @rt("/toggle/{task_id}")
-def post(task_id: str):
-    task_states[task_id] = not task_states.get(task_id, False)
+@rt("/day/{offset}/toggle/{task_id}")
+def post(task_id: str, offset: int = 0):
+    """Handle task toggling for any day (offset=0 is today)"""
+    date_key = get_date_key(offset)
     
-    if all_tasks_completed():
+    # Initialize date in task_states if needed
+    if date_key not in task_states:
+        task_states[date_key] = {}
+    
+    # Toggle the task state for this date
+    task_states[date_key][task_id] = not task_states[date_key].get(task_id, False)
+    
+    if all_tasks_completed(date_key):
         return Div(
             Button(
                 UkIcon("check"),
                 cls="uk-button uk-button-success",
-                hx_post=f"/toggle/{task_id}",
+                hx_post=f"/day/{offset}/toggle/{task_id}" if offset else f"/toggle/{task_id}",
                 hx_swap="outerHTML",
                 id=f"btn_{task_id}",
             ),
             Script("""
-                // First play the sound
-                const playSound = async () => {
-                    try {
-                        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/974/974-preview.mp3');
-                        audio.volume = 0.5;
-                        await audio.play();
-                    } catch (error) {
-                        console.log('Audio play failed:', error);
-                    }
-                };
-
-                // Execute everything in sequence
-                (async () => {
-                    await playSound();
-                    UIkit.modal('#celebration-modal').show();
+                // Your existing celebration code...
+                UIkit.modal('#celebration-modal').show();
+                
+                setTimeout(() => {
+                    const confettiConfig = {
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        colors: ['#1e87f0', '#32d296', '#9c27b0'],
+                        zIndex: 9999
+                    };
+                    
+                    confetti(confettiConfig);
                     
                     setTimeout(() => {
-                        const confettiConfig = {
-                            particleCount: 150,
-                            spread: 100,
-                            origin: { y: 0.6 },
-                            colors: ['#1e87f0', '#32d296', '#9c27b0'],
-                            zIndex: 9999
-                        };
-                        
-                        confetti(confettiConfig);
-                        
-                        setTimeout(() => {
-                            confetti({
-                                ...confettiConfig,
-                                particleCount: 100,
-                                angle: 60,
-                                spread: 80,
-                                origin: { x: 0 }
-                            });
-                            confetti({
-                                ...confettiConfig,
-                                particleCount: 100,
-                                angle: 120,
-                                spread: 80,
-                                origin: { x: 1 }
-                            });
-                        }, 250);
-                    }, 100);
-                })();
+                        confetti({
+                            ...confettiConfig,
+                            particleCount: 100,
+                            angle: 60,
+                            spread: 80,
+                            origin: { x: 0 }
+                        });
+                        confetti({
+                            ...confettiConfig,
+                            particleCount: 100,
+                            angle: 120,
+                            spread: 80,
+                            origin: { x: 1 }
+                        });
+                    }, 250);
+                }, 100);
             """)
         )
     
     return Button(
         UkIcon("check"),
-        cls=ButtonT.primary if not task_states[task_id] else "uk-button uk-button-success",
-        hx_post=f"/toggle/{task_id}",
+        cls=ButtonT.primary if not task_states[date_key].get(task_id, False) else "uk-button uk-button-success",
+        hx_post=f"/day/{offset}/toggle/{task_id}" if offset else f"/toggle/{task_id}",
         hx_swap="outerHTML",
         id=f"btn_{task_id}"
     )
+
 
 def parse_job_list(text_file = 'job_list.txt'):
     """
@@ -155,28 +164,16 @@ def create_section_with_image(category, tasks, image_url, start_task_id):
         cls="space-y-4"
     )
 
-# Add this before your get() function
-SECTION_IMAGES = {
-    'CLEAN ROOM': '/static/images/room.jpg',
-    'SELF CARE': '/static/images/brushing.jpg',
-    'SCHOOL': '/static/images/classroom.jpg',
-    'FAMILY': '/static/images/family.jpg'
-}
-
-
-def all_tasks_completed():
-    """Check if all tasks are marked as completed"""
-     # Get total number of tasks from all categories
+def all_tasks_completed(date_key):
+    """Check if all tasks are completed for a specific date"""
+    # Get total number of tasks
     total_tasks = sum(len(tasks) for tasks in parse_job_list().values())
     
-    # Check if we have the right number of completed tasks
-    if len(task_states) != total_tasks:
-        return False
-        
-    # Check if all existing tasks are completed
-    return all(task_states.values())
-
-
+    # Get tasks for this date
+    day_tasks = task_states.get(date_key, {})
+    
+    # Check if we have all tasks and they're all completed
+    return len(day_tasks) == total_tasks and all(day_tasks.values())
 
 
 def create_celebration_modal():
@@ -200,12 +197,23 @@ def create_celebration_modal():
     )
 
 
-@rt("/")
-def get():
-    today = datetime.now()
-    date_str = today.strftime("%A, %B %d, %Y")
+@rt("/day/{offset}")
+def get(offset: int = 0):   
+    # Calculate the date based on offset
+    target_date = datetime.now() + timedelta(days=offset)
+    date_str = target_date.strftime("%A, %B %d, %Y")
     
+    # Create tab navigation
+    tabs = TabContainer(
+        Li(A("Yesterday", href="/day/-1", cls="uk-active" if offset == -1 else "")),
+        Li(A("Today", href="/", cls="uk-active")),
+        Li(A("Tomorrow", href="/day/1", cls="uk-active" if offset == 1 else "")),
+        Li(A("This Week", href="/week")),
+        alt=True
+    )
+
     header = Div(
+        tabs,
         P(date_str, cls=TextFont.muted_lg),
         H1("Daily Tasks", cls=TextT.bold),
         P("Track your progress through the week", cls=TextFont.muted_sm),
@@ -215,12 +223,15 @@ def get():
 
     # Get tasks using the parsing function
     categories = parse_job_list()
-    
-    # Create sections with images
     sections = []
     task_id = 0
     for category, tasks in categories.items():
-        section = create_section_with_image(category, tasks, SECTION_IMAGES[category], task_id)
+        section = create_section_with_image(
+            category,
+            tasks,
+            SECTION_IMAGES[category],
+            task_id
+        )
         sections.append(section)
         task_id += len(tasks)
 
